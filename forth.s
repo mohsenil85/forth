@@ -7,9 +7,9 @@
     jmp [eax]
 %endmacro
 
-        global start
+        global main
 
-start: 
+main: 
         push dword len
         push dword msg
         push dword 1            ;stdout
