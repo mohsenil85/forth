@@ -9,19 +9,20 @@
 
         global _start
 
-start: 
-        push dword len
-        push dword msg
-        push dword 1            ;stdout
-        mov eax, 4
-        sub esp, 4
-        int 0x80
-        add esp, 16
-        
-        push dword 0
-        mov eax, 1
-        sub esp, 12
-        int 0x80
+_start: 
+	;do writing
+	mov edx, len	;stdout
+	mov ecx, msg	;stdout
+	mov ebx, 1	;stdout
+	mov eax, 4	;syscall for write
+	int 0x80	;call kernel
+	
+	;exit
+	mov ebx, 0 ;exit status
+	mov eax, 1 ;syscall for exit
+	
+	
+
         
 section .data
 msg:    db      "Hello world!", 10
