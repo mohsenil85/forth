@@ -9,8 +9,13 @@
 
 	%macro PUSHRSP 1
 	lea ebp, [ebp-4]
-	mov $1, [ebp]
-	%endmacro
+	mov ebp, %1
+	%endm
+
+	%macro POPRSP 1
+	mov %1,ebp
+	lea ebp, [ebp+4]
+	%endm
 
 section .data
 msg:    db      "Hennnnnnrld!",0x0a
@@ -23,9 +28,11 @@ global 	_start
 
 _start:
 	mov eax, 1
-	mov ebx, 1
-	mov ecx, 1
-	mov edx, 1
+	mov ebx, 2
+	mov ecx, 3
+	mov edx, 4
+	POPRSP eax
+	PUSHRSP edx
 	;NEXT
 	;do writing
 	mov edx, len	;load length
