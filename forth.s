@@ -75,16 +75,15 @@ global 	_start
 _start:
 	cld 		;clear direction flag (?)
 	mov esp, cold_start
-	mov [$var_s0], esp
-	mov eax, 1
-	mov ebx, 2
-	mov ecx, 3
-	mov edx, 4
-	mov [$my_var], eax
-	push dword [eax]
-	push dword [ebx]
-	push dword [ecx]
-	push dword [edx]
+        mov eax, 33
+        mov [var_s0], eax
+	mov [var_s0], esp
+;;; so here we need to point ebp to the top of the return stack
+;;; which i think is sorta "the heap"
+;;; but to defeine $return_stack_top, we need defconst, and
+;; for defconst we need defcode
+        
+        call cold_start
 	call bye
 	
 section .rodata
@@ -94,9 +93,5 @@ cold_start:
 	mov ebx, 2
 	mov ecx, 3
 	mov edx, 4
-	
 	call write_thing
-
-	call bye	
-	
-	
+        

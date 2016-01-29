@@ -3,3 +3,4 @@ a.out
 *.lst
 *.swp
 *.hex
+/#forth.s#
