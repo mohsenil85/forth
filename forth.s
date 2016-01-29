@@ -29,25 +29,39 @@
 section .data
 	msg:    db      "Hennnnnnrld!",0x0a
 	len:	equ 	$ - msg
+	;RETURN_STACK_SIZE: db 8192
+	;BUFFER_SIZE: db 4096
+
+section .bss
+	my_var: resw 32
+	var_s0:	resw 32 	;stores addr at top of param stack 	
+	resb 4096
+return_stack:
+	resb 8192
+return_stack_top: 
+	resb 4096
+buffer:
+	resb 4096
+
 
 section .text
 	align 4
 
 ;;;;my stuff
-kernel:
-	int 0x80	;call kernel
+sys_call:
+	int 0x80	;call sys_call
 	
 write_thing:
 	mov edx, len	;load length
 	mov ecx, msg	;load string
 	mov ebx, 1	;stdout
 	mov eax, 4	;syscall for write
-	call kernel
+	call sys_call
 
 bye:
 	mov ebx, 0 	;exit status
 	mov eax, 1 	;syscall for exit
-	call kernel
+	call sys_call
 
 ;;;;jonestuff
 
@@ -55,14 +69,23 @@ DOCOL:
 	PUSHRSP esi
 	add eax, 4
 	mov esi, eax
+	NEXT
 
 global 	_start
 _start:
 	cld 		;clear direction flag (?)
 	mov esp, cold_start
-	lodsd
-	jmp [eax]
-	;NEXT
+	mov [$var_s0], esp
+	mov eax, 1
+	mov ebx, 2
+	mov ecx, 3
+	mov edx, 4
+	mov [$my_var], eax
+	push dword [eax]
+	push dword [ebx]
+	push dword [ecx]
+	push dword [edx]
+	call bye
 	
 section .rodata
 
