@@ -2,8 +2,9 @@
 ;; Wed Jan 27 18:47:05 PST 2016
         
 %macro NEXT 0
-        lodsd
-        jmp  eax 
+        mov eax, esi 
+        sub esi, 4
+        jmp eax
 %endm
 
 %macro PUSHRSP 1
@@ -48,12 +49,13 @@ _start:
         cld 		;clear direction flag (?)
         mov ebp, var_S0
         call set_up_data_segment
+        xor eax, eax
         mov esi, cold_start 
         NEXT
         
         ;;call bye                
         
-;;;section .rodata
+section .rodata
 
 cold_start:
         call write_thing

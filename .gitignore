@@ -4,3 +4,4 @@ a.out
 *.swp
 *.hex
 /#forth.s#
+/forth-gas.asm
