@@ -29,7 +29,7 @@ write_thing:
         mov ebx, 1	;stdout
         mov eax, 4	;syscall for write
         int 0x80
-        ret
+        jmp here
         
 bye:
         mov ebx, 0 	;exit status
@@ -56,9 +56,9 @@ _start:
         ;;call bye                
         
 section .rodata
-
+ 
 cold_start:
-        call write_thing
+here:
         call bye                
         
 
@@ -71,6 +71,7 @@ set_up_data_segment:
         add eax,INITIAL_DATA_SEGMENT_SIZE ;add 10000 to it
         mov ebx, eax                      ;call brk with the new addr
         mov eax, 45
+
         int 0x80                  ;syssegv
         ret
 
@@ -93,10 +94,4 @@ len:	equ 	$ - msg
         ;RETURN_STACK_SIZE: db 8192
         ;BUFFER_SIZE: db 4096
 INITIAL_DATA_SEGMENT_SIZE: dd 0x10000
-initial_break:
-        dd 0x0
-current_break:
-        dd 0x0
-new_break:
-        dd 0x0
         
