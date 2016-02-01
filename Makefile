@@ -1,8 +1,8 @@
-forth.nasm.out: forth.o
+forth.nasm.out: forth.nasm.o
 	ld -m elf_i386 forth.o -o forth.nasm.out
 #	xxd a.out > a.hex 
 
-forth.nasm.o: forth.s
+forth.nasm.o:
 	nasm -f elf32 -F dwarf -g forth-nasm.asm -o forth.nasm.o # -l a.lst
 gas:
 	gcc -m32 -static -nostdlib -g forth.S

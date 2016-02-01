@@ -111,6 +111,36 @@ defcode "SWAP",4,,SWAP
         pop %ebx
         push %eax
         push %ebx
+        NEXT
+        
+defcode "DUP",3,,DUP
+        mov (%esp),%eax
+        push %eax
+        NEXT
+        
+defcode "OVER",4,,OVER
+        mov 4(%esp),%eax //second elt of stack
+        push %eax
+        NEXT
+        
+defcode "ROT",3,,ROT
+        pop %eax
+        pop %ebx
+        pop %ecx
+        push %ebx
+        push %eax
+        push %ecx
+        NEXT
+
+defcode "-ROT",4,,NROT
+        pop %eax
+        pop %ebx
+        pop %ecx
+        push %eax
+        push %ecx
+        push %ebx
+        NEXT
+
         
 .macro defconst name, namelen, flags=0, label, value
         defcode \name, \namelen, \flags, \label
