@@ -2,9 +2,8 @@
 ;; Wed Jan 27 18:47:05 PST 2016
         
 %macro NEXT 0
-        mov eax, esi 
-        sub esi, 4
-        jmp eax
+        lodsd
+        jmp dword [eax]
 %endm
 
 %macro PUSHRSP 1
@@ -12,7 +11,7 @@
         mov ebp, %1		;store whats in ARG on there
 %endm
 
-%macro POPRSP 1
+%macro POPRSP 1                 ;**not checked yet
         mov %1,ebp		;pop whats on ebp, return to REG
         lea ebp, [ebp+4]	;move stack pointer "up" or "back"
 %endm
@@ -20,23 +19,6 @@
         
 section .text
 align 4
-
-;;;;my stuff
-        
-write_thing:
-        mov edx, len	;load length
-        mov ecx, msg	;load string
-        mov ebx, 1	;stdout
-        mov eax, 4	;syscall for write
-        int 0x80
-        jmp here
-        
-bye:
-        mov ebx, 0 	;exit status
-        mov eax, 1 	;syscall for exit
-        int 0x80
-        
-;;;;jonestuff
 
 DOCOL:
         PUSHRSP esi
@@ -47,7 +29,7 @@ DOCOL:
 global 	_start
 _start:
         cld 		;clear direction flag (?)
-        mov ebp, var_S0
+        mov var_S0,esp
         call set_up_data_segment
         xor eax, eax
         mov esi, cold_start 
@@ -58,8 +40,6 @@ _start:
 section .rodata
  
 cold_start:
-here:
-        call bye                
         
 
 section .text

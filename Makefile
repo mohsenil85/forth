@@ -1,12 +1,12 @@
-# all: forth.o
-# 	ld -m elf_i386 forth.o
+forth.nasm.out: forth.o
+	ld -m elf_i386 forth.o -o forth.nasm.out
 #	xxd a.out > a.hex 
 
-# forth.o: forth.s
-# 	nasm -f elf32 -F dwarf -g forth.s # -l a.lst
-all:
+forth.nasm.o: forth.s
+	nasm -f elf32 -F dwarf -g forth-nasm.asm -o forth.nasm.o # -l a.lst
+gas:
 	gcc -m32 -static -nostdlib -g forth.S
 
 .PHONY: clean
 clean:
-	rm forth.o a.out #;rm  a.hex a.lst			
+	rm *.o *.out #;rm  a.hex a.lst			
