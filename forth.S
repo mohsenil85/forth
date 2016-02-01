@@ -50,8 +50,7 @@ _start:
         mov %esp,var_S0 
         mov $return_stack_top, %ebp
         call set_up_data_segment
-        xor %eax,%eax
-
+        
         mov $cold_start, %esi
         NEXT
 
@@ -100,6 +99,19 @@ cold_start:
             code_\label :
 .endm
         
+
+//FORTH PRIMITIVES
+        
+defcode "DROP",4,,DROP
+        pop %eax
+        NEXT
+        
+defcode "SWAP",4,,SWAP
+        pop %eax
+        pop %ebx
+        push %eax
+        push %ebx
+        
 .macro defconst name, namelen, flags=0, label, value
         defcode \name, \namelen, \flags, \label
         push $\value
@@ -109,13 +121,14 @@ cold_start:
 defconst "R0",2,,RZ,return_stack_top
 
 defcode "RSP!",4,,RSPSTORE
+
 defcode "BRANCH",6,,BRANCH
         add (%esi),%esi
 
 defword "QUIT",4,,QUIT
         .int RZ,RSPSTORE
         //.int INTERPRET
-.int BRANCH,-8
+        .int BRANCH,-8
 
 .section .text
         
@@ -136,21 +149,21 @@ set_up_data_segment:
 
 .bss
 var_HERE:
-.space 4
+	.space 4
 var_S0:
-.space 8
+	.space 8
 
-.align 4096
+	.align 4096
 return_stack:
-.space RETURN_STACK_SIZE
+	.space RETURN_STACK_SIZE
 return_stack_top:
-.align 4096
+	.align 4096
 
 buffer:
-.space BUFFER_SIZE
+	.space BUFFER_SIZE
 
 
 .section .data
 msg:
-.ascii "foo\n"
+	.ascii "foo\n"
         len = . - msg
