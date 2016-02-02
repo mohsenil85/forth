@@ -8,12 +8,12 @@
 
         .macro PUSHRSP reg 
         lea -4(%ebp),%ebp      #make space on the ebp stack
-        movl \reg, (%ebp)          #store whats in reg on there
+        movl \reg,(%ebp)          #store whats in reg on there
         .endm 
 
         .macro POPRSP reg 
-        mov (%ebp), \reg          #pop whats on ebp, return to REG
-        lea 4(%ebp), %ebp       #move stack pointer "up" or "back"
+        mov (%ebp),\reg          #pop whats on ebp, return to REG
+        lea 4(%ebp),%ebp       #move stack pointer "up" or "back"
         .endm 
 
 
@@ -23,10 +23,10 @@
         ####my stuff
 
 write_thing: 
-        movl $len, %edx #load length
-        movl $msg, %ecx #load string
-        movl $1,%ebx    #stdout
-        movl $4,%eax    #syscall for write
+        movl $len,%edx         #load length
+        movl $msg,%ecx         #load string
+        movl $1,%ebx           #stdout
+        movl $4,%eax           #syscall for write
         int $0x80
 
 bye: 
@@ -64,18 +64,9 @@ cold_start:
 
         .set link,0 //link
 
-        push $2
-        push $3
-        .int DUP 
-
-        xor %eax, %eax
-        xor %ebx, %ebx
-        pop %eax
-        pop %ebx
         call write_thing
         call bye
 
-        .section .rodata
         .macro defword name, namelen, flags=0,label
         .section .rodata
         .align 4
