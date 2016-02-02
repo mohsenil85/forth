@@ -164,7 +164,7 @@ var_\name :
         
         defvar "STATE",5,,STATE
         defvar "HERE",4,,HERE
-        defvar "LATEST",6,,LATEST #,name_SYSCALL0
+        defvar "LATEST",6,,LATEST,name_SYSCALL0
         defvar "S0",2,,SZ
         defvar "BASE",4,,BASE
 
@@ -471,7 +471,6 @@ _TCFA:
         movl var_STATE,%edx
         test %edx,%edx
         jz 4f
-
         call _COMMA
         mov interpret_is_lit,%ecx
         test %ecx,%ecx
@@ -484,7 +483,6 @@ _TCFA:
         mov interpret_is_lit,%ecx
         test %ecx,%ecx
         jnz 5f
-
         jmp *(%eax)
 
 5:
@@ -498,20 +496,21 @@ _TCFA:
         mov $__NR_write,%eax
         int $0x80
         
-	mov (currkey),%ecx	// the error occurred just before currkey position
+	mov (currkey),%ecx
 	mov %ecx,%edx
-	sub $buffer,%edx	// %edx = currkey - buffer (length in buffer before currkey)
-	cmp $40,%edx		// if > 40, then print only 40 characters
+	sub $buffer,%edx
+	cmp $40,%edx
 	jle 7f
 	mov $40,%edx
-7:	sub %edx,%ecx		// %ecx = start of area to print, %edx = length
-	mov $__NR_write,%eax	// write syscall
+7:	sub %edx,%ecx
+	mov $__NR_write,%eax
 	int $0x80
-	mov $errmsgnl,%ecx	// newline
+	mov $errmsgnl,%ecx
 	mov $1,%edx
-	mov $__NR_write,%eax	// write syscall
+	mov $__NR_write,%eax
 	int $0x80
 	NEXT
+
 	.section .rodata
 errmsg: .ascii "PARSE ERROR: "
 errmsgend:
@@ -522,6 +521,46 @@ errmsgnl: .ascii "\n"
         .align 4
 interpret_is_lit:
         .int 0
+defcode "CHAR",4,,CHAR
+        call _WORD
+        xor %eax,%eax
+        movb (%edi),%al
+        push %eax
+        NEXT
+        
+        defcode "EXECUTE",7,,EXECUTE
+        pop %eax
+        jmp *(%eax)
+        //no next!, since it takes a fn(appended by NEXT)
+
+        defcode "SYSCALL3",8,,SYSCALL3
+        pop %eax
+        pop %ebx
+        pop %ecx
+        pop %edx
+        int $0x80
+        push %eax
+        NEXT
+
+        defcode "SYSCALL2",8,,SYSCALL2
+        pop %eax
+        pop %ebx
+        pop %ecx
+        int $0x80
+        push %eax
+        NEXT
+
+        defcode "SYSCALL1",8,,SYSCALL1
+        pop %eax
+        pop %ebx
+        int $0x80
+        push %eax
+        NEXT
+
+        defcode "SYSCALL0",8,,SYSCALL0
+        pop %eax
+        int $0x80
+        push %eax
         
         .section .text
         .set INITIAL_DATA_SEGMENT_SIZE,65536
