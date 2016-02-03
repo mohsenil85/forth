@@ -19,24 +19,7 @@
 
         .text
         .align 4
-
-        ####my stuff
-
-write_thing: 
-        movl $len,%edx         #load length
-        movl $msg,%ecx         #load string
-        movl $1,%ebx           #stdout
-        movl $4,%eax           #syscall for write
-        int $0x80
-
-bye: 
-        movl $0,%ebx    #exit status
-        movl $1,%eax    #syscall for exit
-        int $0x80
-
-        .text
-        .align 4
-DOCOL: 
+DOCOL:
         PUSHRSP %esi //push esi on return stack
         addl $4,%eax //make eax point to firt data word
         movl %eax,%esi
@@ -64,9 +47,7 @@ cold_start:
 
         .set link,0 //link
 
-        call write_thing
-        call bye
-
+        
         .macro defword name, namelen, flags=0,label
         .section .rodata
         .align 4
@@ -143,7 +124,7 @@ code_\label :
         NEXT
 
         defcode "EXIT",4,,EXIT
-        POPRSP %eax
+        POPRSP %esi
         NEXT
 
         defcode "LIT",3,,LIT
@@ -435,6 +416,11 @@ _TCFA:
         andl $3,%edi
         andl $~3,%edi
         ret
+
+        defword ">DFA",4,,TDFA
+        .int TCFA
+        .int INCR4
+        .int EXIT
         
 
 
